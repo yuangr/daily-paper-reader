@@ -293,3 +293,14 @@ QQ 群：583867967（欢迎交流，已有：1151 人）
    <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=ziwenhahaha/daily-paper-reader&type=date&legend=top-left&sealed_token=HZNlFXt8xbwRv5OoiqbjkjDPJoOuXlfSMxuVmHWAdDqfd9IVMab3xcK4VxF3DlJAvaO71PL3smUpfEw-NjNT83w8NqNJ0UPIhoNcxbiPhTMQkoMhkawF1w" />
  </picture>
 </a>
+
+### Remote embedding credentials
+
+Configure `DPR_EMBED_API_KEY` explicitly when using remote embeddings. The application no longer falls back to a credential embedded in source. Missing credentials stop before any remote request; local-only execution remains available with remote embedding disabled.
+
+
+### Fork 的远程 embedding 凭据
+
+远程 embedding 需要显式设置 `DPR_EMBED_API_KEY`。GitHub Actions 使用时，请在本仓库的 **Settings → Secrets and variables → Actions** 中创建同名 Secret；本地运行时使用环境变量。缺少此设置时会在发起网络请求前停止，线上模型检查也会报告未配置，避免静默使用源码中的共享 embedding 凭据。
+
+本次补丁的离线测试不证明实际模型服务可用。配置后需通过 `cloud-model-check` 的线上检查再启用依赖远程 embedding 的流程。该改动没有替换上游公益 rerank 的公开访问配置。

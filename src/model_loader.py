@@ -22,7 +22,7 @@ _DEFAULT_REMOTE_TIMEOUT_SECONDS = 60
 _DEFAULT_REMOTE_MAX_TEXT_CHARS = 8000
 _DEFAULT_REMOTE_EMBED_ENDPOINT = os.getenv("DPR_EMBED_API_URL") or "https://zwwen.online/embed"
 # 当前服务使用固定 API key 接入。
-_DEFAULT_REMOTE_EMBED_API_KEY = os.getenv("DPR_EMBED_API_KEY") or "26932a86d772001af60cbd9d2c162bfda3a90e094f797f3d6806f6077478b27a"
+_DEFAULT_REMOTE_EMBED_API_KEY = os.getenv("DPR_EMBED_API_KEY") or ""
 
 
 def _log_default(message: str) -> None:
@@ -392,6 +392,8 @@ def load_sentence_transformer(
   if remote_models_required() and (not allow_remote or not remote_endpoint):
     raise RuntimeError('云端模型模式需要有效的 DPR_EMBED_API_URL，不允许本地 embedding。')
   if allow_remote and remote_endpoint:
+    if not str(remote_api_key or "").strip():
+      raise RuntimeError("Remote embedding requires DPR_EMBED_API_KEY")
     remote_timeout_text = os.getenv("DPR_EMBED_API_TIMEOUT", str(_DEFAULT_REMOTE_TIMEOUT_SECONDS))
     try:
       remote_timeout = int(remote_timeout_text)
