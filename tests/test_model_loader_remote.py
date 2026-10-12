@@ -9,6 +9,18 @@ from src.model_loader import RemoteSentenceTransformer, load_sentence_transforme
 
 
 class RemoteSentenceTransformerTest(unittest.TestCase):
+    def setUp(self):
+        key = patch("src.model_loader._DEFAULT_REMOTE_EMBED_API_KEY", "test-key")
+        key.start()
+        self.addCleanup(key.stop)
+
+    @patch("src.model_loader.requests.post")
+    def test_missing_remote_key_stops_before_network(self, post):
+        with patch("src.model_loader._DEFAULT_REMOTE_EMBED_API_KEY", ""):
+            with self.assertRaisesRegex(RuntimeError, "DPR_EMBED_API_KEY"):
+                load_sentence_transformer("fixture-model", device="cpu")
+        post.assert_not_called()
+
     @patch("src.model_loader.requests.post")
     def test_remote_encode_batches_and_normalizes(self, mock_post):
         resp1 = MagicMock()
@@ -136,7 +148,7 @@ class RemoteSentenceTransformerTest(unittest.TestCase):
         },
         clear=False,
     )
-    def test_load_sentence_transformer_returns_remote_wrapper_with_fixed_key(self):
+    def test_load_sentence_transformer_returns_remote_wrapper_with_configured_key(self):
         model = load_sentence_transformer("BAAI/bge-small-en-v1.5", device="cpu")
         self.assertTrue(getattr(model, "is_remote", False))
         self.assertEqual(model.model_name, "BAAI/bge-small-en-v1.5")
@@ -144,7 +156,7 @@ class RemoteSentenceTransformerTest(unittest.TestCase):
         self.assertEqual(model.timeout, 45)
         self.assertEqual(
             model.api_key,
-            "26932a86d772001af60cbd9d2c162bfda3a90e094f797f3d6806f6077478b27a",
+            "test-key",
         )
 
     @patch("src.model_loader._load_local_sentence_transformer")

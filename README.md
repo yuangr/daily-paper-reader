@@ -293,3 +293,7 @@ QQ 群：583867967（欢迎交流，已有：1151 人）
    <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=ziwenhahaha/daily-paper-reader&type=date&legend=top-left&sealed_token=HZNlFXt8xbwRv5OoiqbjkjDPJoOuXlfSMxuVmHWAdDqfd9IVMab3xcK4VxF3DlJAvaO71PL3smUpfEw-NjNT83w8NqNJ0UPIhoNcxbiPhTMQkoMhkawF1w" />
  </picture>
 </a>
+
+### Remote embedding credentials
+
+Configure `DPR_EMBED_API_KEY` explicitly when using remote embeddings. The application no longer falls back to a credential embedded in source. Missing credentials stop before any remote request; local-only execution remains available with remote embedding disabled.
